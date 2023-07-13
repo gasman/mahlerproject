@@ -21,9 +21,13 @@ To convert a MIDI file to *.bip files, run:
 
 In the middle of the readmidi.py script, we set the variable 'channel_velocities'. This indicates the relative volume levels that the Spectrums will be mixed at, on a scale from 0 to 127. The script will generate as many *.bip files (numbered 100.bip onward) as there are entries in this list, and will attempt to allocate MIDI notes to the Spectrum most closely matching the note's velocity. When you run the script, it will display the distribution of note velocities in the MIDI file, to help you decide on a suitable allocation of volumes.
 
-To have the script generate a rendition of the music as a WAV file, uncomment the last line of the file:
+To have the script generate a rendition of the music as a WAV file, change the global variable switches at the top of the file:
 
-	render.to_wave(note_data, sys.argv[2], freq=11025)
+```
+render_single_wave = True
+render_mutiple_wave = False
+render_basic_code = False
+```
 
 and run:
 

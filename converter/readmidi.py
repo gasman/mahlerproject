@@ -2,6 +2,11 @@ from mido import MidiFile
 import sys
 
 import render
+import basic
+
+render_single_wave = False
+render_mutiple_wave = False
+render_basic_code = False
 
 class Channel(object):
 	def __init__(self, velocity, output_velocity):
@@ -112,18 +117,36 @@ for message in mid:
 			note_assignments[note_ref] = [channel]
 
 for i, c in enumerate(channels):
-	print "channel %i: %i bytes" % (i, len(c.history)*2)
+	print("channel %i: %i bytes" % (i, len(c.history)*2))
 	f = open("%d.bip" % (i+100), 'wb')
 	for (duration, pitch) in c.history:
 		f.write(bytearray([duration, (pitch or -128) + 128]))
 	f.write(bytearray([0, 0]))
 
-print "velocity stats:"
+print("velocity stats:")
 for i in sorted(velocity_stats.keys()):
-	print "%i: %i" % (i, velocity_stats[i])
+	print("%i: %i" % (i, velocity_stats[i]))
 
 note_data = [
 	(c.output_velocity, c.history)
 	for c in channels
 ]
-# render.to_wave(note_data, sys.argv[2], freq=11025)
+
+
+if (render_basic_code):
+	basic.to_basic(channels)
+
+if (render_single_wave):
+	if (len(sys.argv) > 2):
+		print("Rendering waveform")
+		render.to_wave(note_data, sys.argv[2], freq=11025)
+	else:
+		print("Render single wave requested, but no filename given. Please supply one on the command line.")
+
+if (render_mutiple_wave):
+	if (len(sys.argv) > 2):
+		for i, c in enumerate(channels):
+			print("Rendering channel {}...".format(i))
+			render.to_wave([(c.output_velocity, c.history)], str(i) + "_" + sys.argv[2], freq=11025)
+	else:
+		print("Render multiple wave requested, but no filename given. Please supply one on the command line.")
